@@ -76,7 +76,7 @@ The main analysis files are shown below.
 
 # 🧠 1. Data-Driven Modeling
 
-This module supports carcinogenicity prediction by selecting bioassays associated with known carcinogenicity classifications, modeling their endpoints, and combining their predictions.
+Data-driven modeling was developed to transform carcinogenicity prediction into an ensemble learning task across multiple relevant bioassays by mining public toxicity data.
 
 ### Main workflow
 
@@ -290,6 +290,6 @@ If you use these workflows, please cite the associated manuscript:
 ### Related methods described in the manuscript
 
 1. **Bertoni, M. et al.** Bioactivity descriptors for uncharacterized chemical compounds. *Nature Communications* **12**, 3932 (2021).
-2. **Wei, J. N., Belanger, D., Adams, R. P. & Sculley, D.** Rapid prediction of electron–ionization mass spectrometry using neural networks. *ACS Central Science* **5**, 700–708 (2019).
-3. **Ruttkies, C., Schymanski, E. L., Wolf, S., Hollender, J. & Neumann, S.** MetFrag relaunched: incorporating strategies beyond in silico fragmentation. *Journal of Cheminformatics* **8**, 3 (2016).
+2. **Wei, J. N. et al.** Rapid prediction of electron–ionization mass spectrometry using neural networks. *ACS Central Science* **5**, 700–708 (2019).
+3. **Ruttkies, C. et al.** MetFrag relaunched: incorporating strategies beyond in silico fragmentation. *Journal of Cheminformatics* **8**, 3 (2016).
 4. **Marshall, S. et al.** An empirical approach to sufficient similarity: combining exposure data and mixtures toxicology data. *Risk Analysis* **33**, 1582–1595 (2013).
