@@ -1,0 +1,225 @@
+import sys
+import os
+parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(parent_dir)
+
+from chemwalker.gnps import Proteosafe
+from chemwalker.utils import * 
+from chemwalker.draw import *
+
+# Restore sys.path to its original state if needed
+sys.path.remove(parent_dir)
+
+import pandas as pd
+import numpy as np
+import json
+import warnings
+import csv
+import click
+
+@click.group()
+def chemwalker():
+    pass
+
+@chemwalker.command()
+@click.option("--taskid",
+              help="GNPS task id")
+@click.option("--workflow",
+              default='FBMN',
+              help="Workflow type, either FBMN or V2")
+@click.option("--comp", type=int,
+              help="Component (Molecular family) index")
+@click.option("--db",
+              help=".psv Database file")
+@click.option("--metfragpath",
+              default='MetFrag2.3-CL.jar',
+              help=".jar file of metfrag 2.3 command line")
+@click.option("--out",
+              default='random_walk_output',
+              help="Output file name")
+@click.option("--savegraph",
+              default=1,
+              help="Saves a graph with same file name")
+@click.option("--kw",
+              default='{}',
+              help="Key word value arguments")
+def random_walk(taskid, workflow, comp, db, 
+        metfragpath, out, savegraph, kw):
+    print('Retrieving GNPS result...')
+    gnps_result = Proteosafe(taskid, workflow)
+    gnps_result.get_gnps()
+    net = gnps_result.net
+    gnps_tab = gnps_result.gnps
+    spectra = gnps_result.spectra
+    match_tab = gnps_result.dbmatch
+    
+    db = pd.read_csv(db, sep='|')
+    kw = json.loads(kw)
+    
+    if comp!=0:
+        # The try and catch is needed to capture those nodes with no candidates by MetFrag
+        try:
+            tlid = walk_conn_comp(net=net, spectra=spectra, tabgnps=gnps_tab,
+                              dbmatch=match_tab, db=db, comp_index=comp,
+                              metpath=metfragpath, **kw)
+        except Exception as error:
+            print("An exception occurred:", error)
+            headers = ["Score", "InChI", "FragmenterScore_Values", "MaximumTreeDepth", 
+                       "SmilesOfExplPeaks", "MonoisotopicMass", "Identifier", 
+                       "MolecularFormula", "FormulasOfExplPeaks", "InChIKey2", 
+                       "InChIKey1", "FragmenterScore", "ExplPeaks", "NoExplPeaks", 
+                       "NumberPeaksUsed", "cluster index", "uid", "chw_prob"
+                       ]
+
+            # Create an empty dictionary with empty lists for each header
+            empty_data = {header: [] for header in headers}
+
+            # Convert the dictionary to a DataFrame
+            tlid = pd.DataFrame(empty_data)
+    else:
+        ltlid = []
+        for c in net.ComponentIndex.unique():  
+            if c!= -1:
+                try:
+                    ltlid.append(walk_conn_comp(net=net, spectra=spectra, tabgnps=gnps_tab,
+                                                dbmatch=match_tab, db=db, comp_index=c,
+                                                metpath=metfragpath, **kw))
+                except Exception as error:
+                    print("An exception occurred:", error)
+            else:
+                warnings.warn("Self loops are not considered.")
+                pass
+        tlid = pd.concat(ltlid)
+
+    
+    if savegraph and not tlid.empty:
+        exportGraphml(tlid, net, comp, db, out, save=True, match_tab=match_tab)        
+        tlid.to_csv('%s.tsv' % out, sep=',', index=None, quoting=csv.QUOTE_ALL)
+
+@click.option("--tlid",
+              help="ChemWalker candidate list")
+@click.option("--clusterid", type=int,
+              help="Cluster id present in candidate list")
+@click.option("--score", 
+              default='chw_prob',
+              help="Ranking score, either 'Score' or 'chw_prob'")
+@click.option("--nstruct", type=int,
+              default=10,
+              help="Number of candidade structures do display")
+@click.option("--out",
+              default='',
+              help="Filename to save")
+def plot_pannel(tlid, clusterid, score, nstruct, out):
+    tlid = pd.read_csv(tlid, sep=',', quotechar='"')
+    img = plotPannel(tlid, clusterid, score, nstruct)
+    if out!='':
+        img.save('%s.png' % out)
+    else:
+        img.show()
+
+@chemwalker.command()
+@click.option("--taskid",
+              help="GNPS task id")
+@click.option("--workflow",
+              default='FBMN',
+              help="Workflow type, either FBMN or V2")
+@click.option("--tlid",
+              help="ChemWalker candidate list")
+@click.option("--method", 
+              default='RW',
+              help="Method, either 'MF' or 'RW'")
+@click.option("--option", type=int,
+              default=1,
+              help="Options: 1 - Direct neighbors, 2 - Connected component")
+@click.option("--clusterid", type=int,
+              default=None,
+              help="If option is 1 should be provided")
+@click.option("--comp", type=int,
+              default=None,
+              help="If option is 2 should be provided")
+@click.option("--pscale", type=int,
+              default=100,
+              help="Scale of node spreading")
+@click.option("--out",
+              default='.',
+              help="Directory to save")
+def plot_graph(taskid, workflow, tlid, method,
+           option, clusterid, comp, 
+           pscale, out):
+    print('Retrieving GNPS result...')
+    gnps_result = Proteosafe(taskid, workflow)
+    gnps_result.get_gnps()
+    net = gnps_result.net
+    tabgnps = gnps_result.gnps
+    dbmatch = gnps_result.dbmatch
+    tlid = pd.read_csv(tlid, sep=',', quotechar='"')
+
+    if option==1:
+        plotGraph(dbmatch, tabgnps, tlid, net,
+                  method, dr=out, option=option,
+                  comp=comp, pos_scale=pscale)
+    else:
+        plotGraph(dbmatch, tabgnps, tlid, net,
+                  method, dr=out, option=option,
+                  clusterid=clusterid, pos_scale=pscale)
+
+
+@chemwalker.command()
+@click.option("--taskid",
+              default=None,
+              help="GNPS task id")
+@click.option("--workflow",
+              default='FBMN',
+              help="Workflow type, either FBMN, FBMN-gnps2 or V2")
+@click.option("--tlid",
+              help="ChemWalker candidate list file name")
+@click.option("--net", 
+              default=None,
+              help="Edge list file, should be provided if taskid is None")
+@click.option("--db", 
+              help="Structure database .tsv file name")
+@click.option("--compindex", type=int,
+              help="Component index to select nodes")
+@click.option("--out",
+              help="Output filename")
+def save_graphml(taskid, workflow, tlid, net,
+                db, compindex, out):
+    if taskid is not None:
+        print('Retrieving GNPS result...')
+        gnps_result = Proteosafe(taskid, workflow)
+        gnps_result.get_gnps()
+        net = gnps_result.net
+    elif net is not None: 
+    	net = pd.read_csv(net, sep='\t')
+    	match_tab = pd.read_csv(matches, sep='\t') # TODO BY RICARDO THIS IS A MISTAKE NOT FOUND BECAUSE net is not none
+    else:
+        raise Exception("Either taskid or edgelist file should be provided")
+       
+    tlid = pd.read_csv(tlid, sep=',', quotechar='"')
+    db = pd.read_csv(db, sep='|')
+
+    exportGraphml(tlid, net, compindex, db, out, save=True)
+
+@chemwalker.command()
+@click.option("--taskid",
+              default=None,
+              help="GNPS task id")
+@click.option("--workflow",
+              default='FBMN',
+              help="Workflow type, either FBMN, FBMN-gnps2 or V2")
+@click.option("--outputfile",
+              default='components_id.txt',
+              help="Output filename")
+def save_component_ids(taskid, workflow, outputfile):
+    if taskid is None:
+        raise Exception("Either taskid or edgelist file should be provided")
+    gnps_result = Proteosafe(taskid, workflow)
+    gnps_result.get_gnps()
+    net = gnps_result.net
+    componentIndexes = net.ComponentIndex.unique()
+    np.savetxt(outputfile, componentIndexes, fmt='%d')
+    for component_index in componentIndexes:
+        print(component_index)
+
+if __name__ == '__main__':
+    chemwalker()
