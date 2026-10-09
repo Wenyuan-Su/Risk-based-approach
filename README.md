@@ -21,7 +21,7 @@ The computational files are organized into three main modules:
 |---|---|---|
 | 🧠 `1. Data-Driven Modeling/` | PubChem bioassay data collection, endpoint classifiers, ensemble prediction, applicability domain characterization, and structural alert analysis | Python, R |
 | 🔬 `2. Mass Spectrometric Analysis/` | HRMS feature processing, EI spectral prediction with NEIMS, and candidate ranking with ChemWalker | Python, R |
-| 🧪 `3. Similar Mixture Approach/` | Toxicity-weighted comparison of candidate mixtures with a reference mixture using SMACH distances | R |
+| 🧪 `3. Similar Mixture Approach/` | SMACH analysis was used to assess whether the chemical composition of the reference mixture was sufficiently similar to those of the candidate mixtures from dust extracts. | R |
 
 
 ---
