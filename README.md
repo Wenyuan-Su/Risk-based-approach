@@ -1,6 +1,6 @@
 # A risk-based approach prioritizes carcinogens from the exposome atlas of indoor dust
 
-<p align="center">
+<p align="left">
   <img src="https://img.shields.io/badge/Python-Data--driven%20modeling-3776AB?logo=python&logoColor=white" alt="Python modeling">
   <img src="https://img.shields.io/badge/R-SMACH%20analysis-276DC3?logo=r&logoColor=white" alt="R SMACH analysis">
   <img src="https://img.shields.io/badge/HRMS-GC--EI%20%26%20LC--ESI-5A67D8" alt="GC-EI and LC-ESI HRMS">
@@ -10,13 +10,10 @@
 
 ## 🧭 Overview
 
-This repository contains computational workflows supporting the study:
 
 **A risk-based approach prioritizes carcinogens from the exposome atlas of indoor dust**
 
-The study integrates data-driven carcinogenicity prediction, mass spectrometric analysis, mixture exposure experiments, and retrospective exploration of environmental occurrence. Predicted potential carcinogens guide chemical screening in indoor dust, while representative chemical mixtures are evaluated experimentally to identify contributors to the observed mutagenicity.
-
-The study analyzed **135 indoor dust samples** from seven geographic regions of China and prepared **14 composite extracts** for mixture exposure experiments. The ensemble model predicted **1,984 potential carcinogens**, and the mass spectrometric analysis identified **294 potential carcinogens** in dust.
+We propose a general risk-based assessment approach comprising four modules: in silico toxicity prediction, exposome atlas analysis, mixture exposure validation, and environmental distribution exploration. 
 
 The computational files are organized into three main modules:
 
@@ -26,7 +23,6 @@ The computational files are organized into three main modules:
 | 🔬 `2. Mass Spectrometric Analysis/` | HRMS feature processing, EI spectral prediction with NEIMS, and candidate ranking with ChemWalker | Python, R |
 | 🧪 `3. Similar Mixture Approach/` | Toxicity-weighted comparison of candidate mixtures with a reference mixture using SMACH distances | R |
 
-Experimental conditions, chemical identities, concentration data, and detailed mixture compositions are described in the article and Supplementary Information.
 
 ---
 
