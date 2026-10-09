@@ -40,7 +40,7 @@ The main analysis files are shown below.
 ├── 1. Data-Driven Modeling/
 │   ├── 1. Data Collection/
 │   │   ├── PUG-REST.ipynb
-│   │   ├── pubchem_assays聚类分析图.R
+│   │   ├── pubchem_assay_clustering_plot.R
 │   │   ├── pubchem-cid.txt
 │   │   ├── bioprofile_long.csv
 │   │   └── bioprofile_matrix.csv
@@ -57,8 +57,8 @@ The main analysis files are shown below.
 │   ├── 3. Applicability Domain Characterization/
 │   │   └── Application_domain.ipynb
 │   ├── 4. Structural Alert Analysis/
-│   │   ├── 模型可解释性.py
-│   │   └── 模型可解释性-高亮原子和化学键.py
+│   │   ├── structural_alert_analysis.py
+│   │   └── structural_alert_visualization.py
 │   ├── external_validation_standardized.csv
 │   └── model_comparasion.csv
 ├── 2. Mass Spectrometric Analysis/
@@ -123,8 +123,8 @@ Applicability domain analysis uses structural similarity and local discontinuity
 | `AID_*.ipynb` in `2. Model Construction/` | Develop and evaluate the eight endpoint classifiers |
 | [Ensemble_model.ipynb](1.%20Data-Driven%20Modeling/2.%20Model%20Construction/Ensemble_model.ipynb) | Combine endpoint predictions and evaluate ensemble performance |
 | [Application_domain.ipynb](1.%20Data-Driven%20Modeling/3.%20Applicability%20Domain%20Characterization/Application_domain.ipynb) | Characterize prediction reliability using structural similarity and local discontinuity |
-| [模型可解释性.py](1.%20Data-Driven%20Modeling/4.%20Structural%20Alert%20Analysis/模型可解释性.py) | Analyze carcinogenicity-associated molecular scaffolds |
-| [模型可解释性-高亮原子和化学键.py](1.%20Data-Driven%20Modeling/4.%20Structural%20Alert%20Analysis/模型可解释性-高亮原子和化学键.py) | Visualize structural alerts in molecular structures |
+| [structural_alert_analysis.py](1.%20Data-Driven%20Modeling/4.%20Structural%20Alert%20Analysis/structural_alert_analysis.py) | Analyze carcinogenicity-associated molecular scaffolds |
+| [structural_alert_visualization.py](1.%20Data-Driven%20Modeling/4.%20Structural%20Alert%20Analysis/structural_alert_visualization.py) | Visualize structural alerts in molecular structures |
 
 ### Inputs and outputs
 
